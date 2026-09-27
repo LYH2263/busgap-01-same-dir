@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
+import { dirLabel } from '../directions'
 const trips = ref<any[]>([])
 const events = ref<any[]>([])
 const loading = ref(false)
@@ -23,14 +24,14 @@ function label(s: string) {
 </script>
 <template>
   <h1>串车报告</h1>
-  <p class="sub">按实际到站间隔对照计划发车间隔 · 竖直条带展示</p>
+  <p class="sub">按实际到站间隔对照计划发车间隔 · 仅同方向相邻到站参与判定（竖直条带）</p>
   <button class="btn" :disabled="loading" @click="run">重新检测</button>
   <div class="bg-split" style="margin-top:1rem">
     <aside class="bg-trip-col">
       <h2>关联班次</h2>
       <div v-for="r in trips" :key="r.id ?? r.trip_no" class="bg-trip-row">
         <div>
-          <div>{{ r.trip_no }}</div>
+          <div>{{ r.trip_no }} <span class="badge" :class="r.resolved_direction === 'down' ? 'badge-warn' : 'badge-ok'">{{ dirLabel(r.resolved_direction) }}</span></div>
           <div class="bg-trip-meta">{{ r.vehicle_no }}</div>
         </div>
         <div class="bg-trip-meta">{{ r.planned_depart }}</div>
@@ -43,7 +44,7 @@ function label(s: string) {
         class="bg-gap-strip"
         :class="stripClass(e.status)"
       >
-        <header>{{ e.stop_name }}</header>
+        <header>{{ e.stop_name }} · {{ dirLabel(e.direction) }}</header>
         <div class="bg-gap-body">
           <div class="bg-gap-val">{{ e.gap_min }}′</div>
           <div>计划 {{ e.planned_headway_min }}′</div>
@@ -53,6 +54,7 @@ function label(s: string) {
           </span>
         </div>
       </article>
+      <p v-if="!events.length" class="muted">暂无间隔事件</p>
     </div>
   </div>
 </template>

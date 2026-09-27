@@ -11,6 +11,8 @@ class Line(Base):
     planned_headway_min: Mapped[float] = mapped_column(Float, default=8.0)
     bunch_threshold: Mapped[float] = mapped_column(Float, default=3.0)
     large_threshold: Mapped[float] = mapped_column(Float, default=15.0)
+    # 线路登记的默认方向：up 上行 / down 下行；NULL 表示未登记（按上行兼容）
+    direction: Mapped[str | None] = mapped_column(String(8), nullable=True)
     trips: Mapped[list["Trip"]] = relationship(back_populates="line")
 
 class Trip(Base):
@@ -20,6 +22,8 @@ class Trip(Base):
     trip_no: Mapped[str] = mapped_column(String(32))
     planned_depart: Mapped[datetime] = mapped_column(DateTime)
     vehicle_no: Mapped[str] = mapped_column(String(32), default="")
+    # 班次方向，优先于线路方向；NULL 表示未登记（继承线路，最终按上行兼容）
+    direction: Mapped[str | None] = mapped_column(String(8), nullable=True)
     line: Mapped["Line"] = relationship(back_populates="trips")
     arrivals: Mapped[list["Arrival"]] = relationship(back_populates="trip")
 
