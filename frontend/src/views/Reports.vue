@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
+import { directionLabel } from '../direction'
 const trips = ref<any[]>([])
 const events = ref<any[]>([])
 const loading = ref(false)
@@ -43,7 +44,7 @@ function label(s: string) {
         class="bg-gap-strip"
         :class="stripClass(e.status)"
       >
-        <header>{{ e.stop_name }}</header>
+        <header>{{ e.stop_name }} · {{ directionLabel(e.direction) }}</header>
         <div class="bg-gap-body">
           <div class="bg-gap-val">{{ e.gap_min }}′</div>
           <div>计划 {{ e.planned_headway_min }}′</div>

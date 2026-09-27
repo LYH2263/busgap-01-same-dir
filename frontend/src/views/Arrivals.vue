@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
+import { directionLabel } from '../direction'
 const rows = ref<any[]>([])
 onMounted(async () => { rows.value = await api('/arrivals') })
 </script>
@@ -9,9 +10,9 @@ onMounted(async () => { rows.value = await api('/arrivals') })
   <p class="sub">各班次实际到站记录</p>
   <div class="card">
     <table>
-      <thead><tr><th>班次</th><th>站序</th><th>站点</th><th>实际到站</th></tr></thead>
+      <thead><tr><th>班次</th><th>方向</th><th>站序</th><th>站点</th><th>实际到站</th></tr></thead>
       <tbody>
-        <tr v-for="r in rows" :key="r.id ?? JSON.stringify(r)"><td>{{ r.trip_no }}</td><td>{{ r.stop_seq }}</td><td>{{ r.stop_name }}</td><td>{{ r.actual_arrive }}</td></tr>
+        <tr v-for="r in rows" :key="r.id ?? JSON.stringify(r)"><td>{{ r.trip_no }}</td><td>{{ directionLabel(r.direction) }}</td><td>{{ r.stop_seq }}</td><td>{{ r.stop_name }}</td><td>{{ r.actual_arrive }}</td></tr>
       </tbody>
     </table>
   </div>
